@@ -42,8 +42,8 @@ wandb login
 ## How to Run
 
 ```bash
-python train_anfis.py \
-    --dataset phishing \
+python phishing_example.py \
+    --dataset ISCX-URL-2016 \
     --batch_size 64 \
     --epochs 50 \
     --lr 0.001 \
@@ -56,7 +56,7 @@ python train_anfis.py \
 ### Command-line Arguments
 | Parameter         | Default | Description |
 |-------------------|---------|-------------|
-| `--dataset`        | urlset  | Dataset type: 'phishStorm', 'phishing', 'DEPHIDES' |
+| `--dataset`        | urlset  | Dataset type: 'phishStorm', 'ISCX-URL-2016', 'DEPHIDES' |
 | `--batch_size`     | 64      | Training batch size |
 | `--epochs`         | 50      | Number of training epochs |
 | `--lr`             | 0.001   | Initial learning rate |
