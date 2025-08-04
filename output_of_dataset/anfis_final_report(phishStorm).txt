@@ -1,0 +1,6 @@
+Final Accuracy: 0.8487
+False Positive Rate (FPR): 0.1212
+False Negative Rate (FNR): 0.1809
+Confusion Matrix:
+[[8325 1148]
+ [1743 7893]]
