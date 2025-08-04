@@ -24,3 +24,5 @@ It supports **Weights & Biases (W&B)** for training visualization and **command-
 ```bash
 git clone https://github.com/2020147585/phish_anfis_pytorch.git
 cd anfis-phishing
+
+### 2. Install Dependencies
