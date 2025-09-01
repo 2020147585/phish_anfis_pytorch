@@ -1,20 +1,34 @@
-# phish_anfis_pytorch
-# ANFIS-Based Phishing URL Detection
+# ANFIS-Based Phishing URL Detection (PyTorch)
 
-This project implements an **Adaptive Neuro-Fuzzy Inference System (ANFIS)** model for phishing URL detection using **PyTorch**.  
-It supports **Weights & Biases (W&B)** for training visualization and **command-line arguments (argparse)** for flexible configuration.
+This repository implements a **PyTorch-based Adaptive Neuro-Fuzzy Inference System (ANFIS)** for phishing URL detection.  
+It supports **Weights & Biases (W&B)** visualization, flexible **command-line arguments**, and outputs comprehensive performance metrics.
 
 ---
 
-##  Features
--  PyTorch implementation of ANFIS  
--  Supports both **bell-shaped** and **Gaussian** membership functions  
--  Automatic initialization with **K-Means clustering**  
--  **Hybrid Learning**: Backpropagation + Least Squares Estimation (LSE)  
--  **Dynamic learning rate** scheduling via `StepLR`  
--  Full **training visualization** with W&B  
--  Saves training metrics, confusion matrix, final model weights，etc..  
--  Multiple dataset support (ISCX-URL-2016, PhishStorm, DEPHIDE)
+## New Features (compared to previous version)
+- **Threshold Optimization**: automatically selects the best `best_threshold`, configurable via `--optimize_for f1/accuracy/precision/recall`.
+- **Extended Final Metrics**:
+  - Accuracy, Precision, Recall, F1, False Positive Rate
+  - `inference_time_ms_per_instance` (per-URL inference time)
+  - `avg_mem_mb_single_url` / `max_mem_mb_single_url` (memory usage fluctuation in MB)
+  - `python_peak_alloc_kb` (Python-level peak allocation in KB)
+  - `model_size_mb` (model file size)
+  - `strong_conf_*` metrics (coverage and accuracy of high-confidence predictions)
+- **W&B Line Logging**: Accuracy, Precision, Recall, F1, and FPR tracked per epoch.
+- **Result folder (`result/`)** with JSON metrics and final reports:
+  - `anfis_metrics_<dataset>.json` (final metrics)
+  - `anfis_final_report.txt` (detailed confusion matrix & error rates)
+
+---
+
+## 🚀 Features
+- ANFIS implementation in PyTorch
+- Supports **bell-shaped** and **Gaussian** membership functions
+- K-Means initialization
+- **Hybrid Learning** (Backpropagation + Least Squares Estimation)
+- StepLR learning rate scheduler
+- Dataset support: ISCX-URL-2016, PhishStorm, DEPHIDES
+- Real-time W&B monitoring (epoch curves + final metrics)
 
 ---
 
@@ -35,88 +49,81 @@ pip install -r requirements.txt
 ```bash
 wandb login
 ```
-> If you don't have an account, choose "Create a W&B account" when prompted.
 
 ---
 
-## How to Run
+##  How to Run
 
 ```bash
-python phishing_example.py \
-    --dataset ISCX-URL-2016 \
-    --batch_size 64 \
-    --epochs 50 \
-    --lr 0.001 \
-    --num_mfs 3 \
-    --mf_type bell \
-    --scheduler_step 20 \
-    --scheduler_gamma 0.5
+python phishing_example.py     --dataset ISCX-URL-2016     --batch_size 64     --epochs 50     --lr 0.001     --num_mfs 3     --mf_type bell     --scheduler_step 20     --scheduler_gamma 0.5     --optimize_for f1     --strong_pos_threshold 0.9     --strong_neg_threshold 0.1
 ```
-(there has a ouput that can be login wandb if you want)
+
 ### Command-line Arguments
-| Parameter         | Default | Description |
-|-------------------|---------|-------------|
-| `--dataset`        | urlset  | Dataset type: 'phishStorm', 'ISCX-URL-2016', 'DEPHIDES' |
-| `--batch_size`     | 64      | Training batch size |
-| `--epochs`         | 50      | Number of training epochs |
-| `--lr`             | 0.001   | Initial learning rate |
-| `--num_mfs`        | 3       | Number of membership functions per feature |
-| `--mf_type`        | bell    | Membership function type: `bell`, `gauss` |
-| `--scheduler_step` | 20      | StepLR: Reduce LR every N epochs |
-| `--scheduler_gamma`| 0.5     | StepLR: Multiplicative factor for LR |
+| Argument                  | Default   | Description |
+|---------------------------|-----------|-------------|
+| `--dataset`              | urlset    | Dataset: 'phishStorm', 'ISCX-URL-2016', 'DEPHIDES', 'urlset' |
+| `--batch_size`           | 64        | Training batch size |
+| `--epochs`               | 50        | Number of epochs |
+| `--lr`                   | 0.001     | Initial learning rate |
+| `--num_mfs`              | 3         | Membership functions per feature |
+| `--mf_type`              | bell      | Membership type: `bell`, `gauss` |
+| `--scheduler_step`       | 20        | StepLR step size |
+| `--scheduler_gamma`      | 0.5       | StepLR decay factor |
+| `--optimize_for`         | f1        | Metric to optimize threshold: f1 / accuracy / precision / recall |
+| `--strong_pos_threshold` | 0.9       | Strong positive confidence threshold |
+| `--strong_neg_threshold` | 0.1       | Strong negative confidence threshold |
 
 ---
 
 ##  Training Results
 
-###  Metrics (Accuracy, Precision, Recall, F1, AUC)
+### Per-Epoch Metrics (W&B Line Charts)
+- Accuracy, Precision, Recall, F1, False Positive Rate  
 
-###  Prediction vs True Label Distribution
-
-
-###  False Positive/Negative Rate vs Threshold
-
-###  Confusion Matrix
-
-###  Final Report.txt
-
+### Final Output Metrics (JSON & W&B summary)
+```json
+{
+  "accuracy": 0.88,
+  "precision": 0.92,
+  "recall": 0.84,
+  "f1": 0.88,
+  "false_positive_rate": 0.07,
+  "inference_time_ms_per_instance": 1.6,
+  "avg_mem_mb_single_url": 0.004,
+  "max_mem_mb_single_url": 0.02,
+  "python_peak_alloc_kb": 68,
+  "model_size_mb": 0.014,
+  "best_threshold": 0.65,
+  "strong_conf_coverage": 0.59,
+  "strong_pos_accuracy": 0.98,
+  "strong_neg_accuracy": 0.96
+}
 ```
-Final Accuracy
-False Positive Rate (FPR)
-False Negative Rate (FNR)
-Confusion Matrix:
-[[TN FP]
- [FN TP]]
-```
+
+### Visualizations
+- `anfis_metrics_curve.png` → Metric curves  
+- `anfis_predictions_vs_true_bar.png` → Label distribution comparison  
+- `anfis_confusion_matrix_labeled.png` → Confusion matrix  
+- `fpr_fnr_vs_threshold.png` → FPR/FNR vs threshold curve  
 
 ---
 
-## Output Files
-- `anfis_metrics_curve.png` → Training metrics plot  
-- `anfis_predictions_vs_true_bar.png` → Prediction distribution  
-- `fpr_fnr_vs_threshold.png` → Threshold optimization curve  
-- `anfis_confusion_matrix_labeled.png` → Confusion matrix visualization  
-- `anfis_final_report.txt` → Final report with Accuracy, FPR, FNR  
-- `anfis_model.pth` → Trained model weights  
+##  Output Files
+- `result/anfis_metrics_<dataset>.json` → Final metrics  
+- `anfis_final_report.txt` → Accuracy / FPR / FNR / Confusion Matrix   
+- Visualizations (curves, bars, confusion matrix, etc.)  
 
 ---
 
 ##  W&B Dashboard
-You can view detailed logs and training visualizations on W&B if you login before training:  
+Training and results can be viewed in W&B:  
 [View Project](https://wandb.ai/YOUR_USERNAME/anfis-phishing)
 
 ---
 
- 
-
----
-
-##  Known Limitations / Future Improvements
--  Accuracy can decrease when adding more features → Need **feature selection** or **regularization**  
--  Hybrid mode may freeze training → Requires improved LSE optimization  
--  Membership functions are fixed (Bell/Gauss only) → Future: add **triangular** or **custom MFs**  
--  Hyperparameters tuned manually → Future: integrate **AutoML or Optuna**  
--  Model currently tested on limited datasets. Moreover, for the PhishStorm and DEPHIDES datasets, although the data volume is large, the results are not good enough. The reason might lie in some errors made during data cleaning → Need more phishing datasets for robustness  
-
----
+##  Known Limitations / Future Work
+- Weaker performance on PhishStorm / DEPHIDES datasets → requires better feature engineering  
+- Limited high-confidence coverage → needs more membership functions and structural tuning  
+- Currently only supports bell / gauss membership functions → future: triangular / custom MFs  
+- Hyperparameters are manually tuned → plan: Optuna / AutoML for optimization  
 
