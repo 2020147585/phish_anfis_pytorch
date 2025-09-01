@@ -21,7 +21,7 @@ It supports **Weights & Biases (W&B)** visualization, flexible **command-line ar
 
 ---
 
-## 🚀 Features
+## Features
 - ANFIS implementation in PyTorch
 - Supports **bell-shaped** and **Gaussian** membership functions
 - K-Means initialization
