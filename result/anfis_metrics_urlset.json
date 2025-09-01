@@ -1,0 +1,22 @@
+{
+  "accuracy": 0.8390287299178397,
+  "precision": 0.8320485147497173,
+  "recall": 0.8487994128132537,
+  "f1": 0.8403404962109415,
+  "false_positive_rate": 0.17070622649394065,
+  "inference_time_ms_per_instance": 1.4893668671440707,
+  "avg_mem_mb_single_url": 0.003936767578125,
+  "max_mem_mb_single_url": 0.01953125,
+  "python_peak_alloc_kb": 3.4150390625,
+  "model_size_mb": 0.012356758117675781,
+  "best_threshold": 0.44,
+  "optimize_for": "f1",
+  "strong_pos_threshold": 0.9,
+  "strong_neg_threshold": 0.1,
+  "strong_pos_count": 5501,
+  "strong_neg_count": 1947,
+  "strong_conf_total": 7448,
+  "strong_conf_coverage": 0.389763985556544,
+  "strong_pos_accuracy": 0.9781857844028359,
+  "strong_neg_accuracy": 0.9229583975346687
+}
